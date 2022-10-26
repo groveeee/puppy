@@ -27,7 +27,7 @@ public class TomcatStart {
         System.out.println("工作目录: " + tomcat.getServer().getCatalinaBase().getAbsolutePath());
 
         tomcat.setPort(port);
-        Connector conn = tomcat.getConnector(); // Tomcat 9.0 必须调用 Tomcat#getConnector() 方法之后才会监听端口
+        Connector conn = tomcat.getConnector(); // Tomcat 9.0后 必须调用 Tomcat#getConnector() 方法之后才会监听端口 现在用的10版本
         System.out.println("连接器设置完成: " + conn);
 
 
