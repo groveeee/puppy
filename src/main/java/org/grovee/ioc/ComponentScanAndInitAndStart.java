@@ -1,4 +1,4 @@
-package org.grovee.init;
+package org.grovee.ioc;
 
 import org.grovee.context.ApplicationContext;
 import org.grovee.context.ClassContext;

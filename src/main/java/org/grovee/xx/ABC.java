@@ -1,7 +1,7 @@
 package org.grovee.xx;
 
 import org.grovee.di.Automatic;
-import org.grovee.init.Component;
+import org.grovee.ioc.Component;
 
 /**
  * @author grovee
