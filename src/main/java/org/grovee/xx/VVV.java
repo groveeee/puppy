@@ -1,6 +1,6 @@
 package org.grovee.xx;
 
-import org.grovee.scan.Component;
+import org.grovee.init.Component;
 
 /**
  * @author grovee

@@ -1,8 +1,9 @@
-package org.grovee.scan;
+package org.grovee.init;
 
 import org.grovee.context.ApplicationContext;
 import org.grovee.context.ClassContext;
 import org.grovee.di.Automatic;
+import org.grovee.tomcat.TomcatStart;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -17,10 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description TODO
  * @createTime 2022年10月26日 10:56:00
  */
-public class ComponentScanAndInit {
+public class ComponentScanAndInitAndStart {
 
     static {
-        URL resource = ComponentScanAndInit.class.getClassLoader().getResource(getRootPath().replace(".", "/"));
+        URL resource = ComponentScanAndInitAndStart.class.getClassLoader().getResource(getRootPath().replace(".", "/"));
         System.out.println("项目根路径:" + resource);
         // 通过扫描路径获取项目根路径文件对象
         assert resource != null;
@@ -34,15 +35,15 @@ public class ComponentScanAndInit {
             throw new RuntimeException(e);
         }
         attributeAssignment();
-        ApplicationContext.getApps().forEach((k, v) -> {
-            System.out.print(k);
-            System.out.print(" == ");
-            System.out.print(v);
-        });
-        System.out.println();
         System.out.println("====================类与对象初始化完成====================");
-        System.out.println(ClassContext.getClassConfig());
-        System.out.println("====================类与对象初始化完成====================");
+    }
+
+    /**
+     * 启动Tomcat容器
+     * @param port
+     */
+    public static void start(int port){
+        TomcatStart.start(port);
     }
 
     /**
@@ -79,7 +80,7 @@ public class ComponentScanAndInit {
                 String path = file.getAbsolutePath();
                 if (path.endsWith(".class")) {
                     String classes = path.substring(path.indexOf("classes") + "classes".length() + 1, path.indexOf(".class")).replace("\\", ".");
-                    Class<?> aClass = ComponentScanAndInit.class.getClassLoader().loadClass(classes);
+                    Class<?> aClass = ComponentScanAndInitAndStart.class.getClassLoader().loadClass(classes);
                     if (aClass.isAnnotationPresent(Component.class)) {
                         System.out.println(aClass + "已被加载");
                         String beanName = aClass.getAnnotation(Component.class).value();
