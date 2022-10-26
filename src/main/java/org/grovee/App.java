@@ -1,6 +1,6 @@
 package org.grovee;
 
-import org.grovee.ioc.ComponentScanAndInitAndStart;
+import org.grovee.ioc.init.ComponentScanAndInitAndStart;
 
 /**
  * Hello world!

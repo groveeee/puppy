@@ -1,4 +1,4 @@
-package org.grovee.mc;
+package org.grovee.mc.enums;
 
 /**
  * @author grovee

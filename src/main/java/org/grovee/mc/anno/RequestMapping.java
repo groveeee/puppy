@@ -1,4 +1,6 @@
-package org.grovee.mc;
+package org.grovee.mc.anno;
+
+import org.grovee.mc.enums.RequestMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,7 +24,7 @@ public @interface RequestMapping {
     /**
      * 请求类型
      */
-    RequestMethod[] method();
+    RequestMethod[] method() default {};
 
     /**
      * 请求参数

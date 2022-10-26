@@ -1,4 +1,4 @@
-package org.grovee.mc;
+package org.grovee.mc.anno;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

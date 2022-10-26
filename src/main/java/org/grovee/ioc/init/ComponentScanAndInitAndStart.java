@@ -1,8 +1,9 @@
-package org.grovee.ioc;
+package org.grovee.ioc.init;
 
 import org.grovee.context.ApplicationContext;
 import org.grovee.context.ClassContext;
 import org.grovee.di.Automatic;
+import org.grovee.ioc.Component;
 import org.grovee.tomcat.TomcatStart;
 
 import java.io.File;
