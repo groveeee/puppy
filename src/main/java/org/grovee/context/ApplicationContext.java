@@ -1,5 +1,7 @@
 package org.grovee.context;
 
+import org.grovee.log.Log;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -36,7 +38,17 @@ public class ApplicationContext {
      * @return Object
      */
     public static Object getObject(Class<?> c) {
-        System.out.println("获取的对象的类的名字:" + c.getName());
+        Log.info("获取的对象的类的名字:" + c.getName());
         return apps.get(ClassContext.get(c));
+    }
+
+    /**
+     * 通过接口类型 获取其对应的实现类的单例对象
+     *
+     * @param c
+     * @return
+     */
+    public static Object getInstanceImp(Class<?> c) throws ClassNotFoundException {
+        return apps.get(ClassContext.getClassImpl(c));
     }
 }

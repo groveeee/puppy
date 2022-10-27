@@ -1,8 +1,10 @@
 package org.grovee.web.controller;
 
+import org.grovee.di.Automatic;
 import org.grovee.mc.anno.Controller;
 import org.grovee.mc.anno.RequestMapping;
-import org.grovee.mc.enums.RequestMethod;
+import org.grovee.mc.constant.RequestMethod;
+import org.grovee.xx.TestService;
 
 /**
  * @author grovee
@@ -14,8 +16,12 @@ import org.grovee.mc.enums.RequestMethod;
 @Controller
 @RequestMapping(value = "/test")
 public class TestController {
+
+    @Automatic
+    private TestService service;
+
     @RequestMapping(value = "/xxx",method = RequestMethod.GET)
     public String test(){
-        return "success";
+        return service.doSome();
     }
 }

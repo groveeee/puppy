@@ -1,6 +1,6 @@
 package org.grovee.mc.anno;
 
-import org.grovee.mc.enums.RequestMethod;
+import org.grovee.mc.constant.RequestMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

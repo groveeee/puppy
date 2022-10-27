@@ -9,5 +9,9 @@ import org.grovee.ioc.Service;
  * @createTime 2022年10月26日 11:30:00
  */
 @Service
-public class VVV {
+public class TestServiceImpl implements TestService{
+    @Override
+    public String doSome() {
+        return "success";
+    }
 }

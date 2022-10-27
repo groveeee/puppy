@@ -39,4 +39,18 @@ public class ClassContext {
     public static String get(Class<?> c) {
         return classConfig.get(c);
     }
+
+    /**
+     * 通过类型获取其实现类的对象别名
+     * @param c 接口类型
+     * @return 别名
+     */
+    public static String getClassImpl(Class<?> c) throws ClassNotFoundException {
+        for (Class<?> aClass : classConfig.keySet()) {
+            if (c.isAssignableFrom(aClass)){
+                return get(aClass);
+            }
+        }
+        throw new ClassNotFoundException();
+    }
 }

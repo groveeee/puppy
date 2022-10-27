@@ -5,6 +5,7 @@ import org.grovee.context.ClassContext;
 import org.grovee.di.Automatic;
 import org.grovee.ioc.Component;
 import org.grovee.ioc.Service;
+import org.grovee.log.Log;
 import org.grovee.mc.anno.Controller;
 import org.grovee.mc.anno.RequestMapping;
 import org.grovee.mc.matcher.RequestMatcher;
@@ -29,9 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ComponentScanAndInitAndStart {
 
     public static long startTime = System.currentTimeMillis();
+
     static {
         URL resource = ComponentScanAndInitAndStart.class.getClassLoader().getResource(getRootPath().replace(".", "/"));
-        System.out.println("项目根路径:" + resource);
+        Log.info("项目根路径:" + resource);
         // 通过扫描路径获取项目根路径文件对象
         assert resource != null;
         File[] files = new File(resource.getFile()).listFiles();
@@ -44,15 +46,16 @@ public class ComponentScanAndInitAndStart {
             throw new RuntimeException(e);
         }
         attributeAssignment();
-        System.out.println("====================类与对象初始化完成====================");
+        Log.info("类与对象初始化完成");
     }
 
     /**
      * 启动Tomcat容器
+     *
      * @param port
      */
-    public static void start(int port){
-        TomcatStart.start(port);
+    public static void start(int port) {
+        new Thread(() -> TomcatStart.start(port)).start();
     }
 
     /**
@@ -66,7 +69,7 @@ public class ComponentScanAndInitAndStart {
             if ("main".equals(stackTraceElement.getMethodName())) {
                 try {
                     Class<?> aClass = Class.forName(stackTraceElement.getClassName());
-                    System.out.println("main方法所在的包路径也就是项目根路径" + aClass.getPackageName());
+                    Log.info("main方法所在的包路径也就是项目根路径" + aClass.getPackageName());
                     return aClass.getPackageName();
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
@@ -94,12 +97,12 @@ public class ComponentScanAndInitAndStart {
                     Controller controller = aClass.getAnnotation(Controller.class);
                     Component component = aClass.getAnnotation(Component.class);
                     // 加载标识了@Component和@Service注解的类
-                    if (component!=null || service!=null) {
-                        String beanName = component!=null?component.value():service.value();
+                    if (component != null || service != null) {
+                        String beanName = component != null ? component.value() : service.value();
                         LoadInstance(aClass, beanName);
                     }
                     // 加载控制器
-                    if (controller!=null){
+                    if (controller != null) {
                         Object instance = LoadInstance(aClass, controller.value());
                         RequestMapping rootRequestMapping = aClass.getAnnotation(RequestMapping.class);
                         // 控制器上的路径 根路径
@@ -110,10 +113,10 @@ public class ComponentScanAndInitAndStart {
                             // 打破封装
                             method.setAccessible(true);
                             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                            if (requestMapping!=null){
-                                UniqueRequest uniqueRequest = new UniqueRequest(rootPath+requestMapping.value(),requestMapping.method());
+                            if (requestMapping != null) {
+                                UniqueRequest uniqueRequest = new UniqueRequest(rootPath + requestMapping.value(), requestMapping.method());
                                 UniqueHandlerMethod uniqueHandlerMethod = new UniqueHandlerMethod(method, instance);
-                                RequestMatcher.add(uniqueRequest,uniqueHandlerMethod);
+                                RequestMatcher.add(uniqueRequest, uniqueHandlerMethod);
                             }
                         }
                     }
@@ -122,6 +125,17 @@ public class ComponentScanAndInitAndStart {
         }
     }
 
+    /**
+     * 加载实例到IOC容器
+     *
+     * @param aClass   类对象
+     * @param beanName 实例别名
+     * @return 实例
+     * @throws InstantiationException    InstantiationException
+     * @throws IllegalAccessException    IllegalAccessException
+     * @throws InvocationTargetException InvocationTargetException
+     * @throws NoSuchMethodException     NoSuchMethodException
+     */
     private static Object LoadInstance(Class<?> aClass, String beanName) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Object instance = aClass.getDeclaredConstructor().newInstance();
         if ("".equals(beanName)) {
@@ -143,15 +157,29 @@ public class ComponentScanAndInitAndStart {
             Field[] declaredFields = c.getDeclaredFields();
             for (Field declaredField : declaredFields) {
                 if (declaredField.isAnnotationPresent(Automatic.class)) {
-                    System.out.println("字段对应的类型:" + declaredField.getType());
+                    // 获取字段对应的类型
+                    Class<?> type = declaredField.getType();
+                    Log.info(declaredField + " 字段对应的类型 " + declaredField);
+                    boolean anInterface = type.isInterface();
                     // 打破封装 设置该字段的值
                     declaredField.setAccessible(true);
+                    // 获取还未注入完属性的对象 为其填充字段
                     Object object = ApplicationContext.getObject(c);
-                    System.out.println("为字段赋值");
-                    System.out.println(object);
+                    Log.info("为字段赋值");
+                    // 获取需要填充给字段的对象
+                    Object fieldObj = null;
+                    if (type.isInterface()) {
+                        try {
+                            fieldObj = ApplicationContext.getInstanceImp(type);
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        fieldObj = ApplicationContext.getObject(type);
+                    }
                     try {
-                        declaredField.set(object, ApplicationContext.getObject(declaredField.getType()));
-                        System.out.println(object);
+                        // 为字段赋值
+                        declaredField.set(object, fieldObj);
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
                     }
