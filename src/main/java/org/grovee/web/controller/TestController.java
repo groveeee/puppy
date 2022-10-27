@@ -20,7 +20,7 @@ public class TestController {
     @Automatic
     private TestService service;
 
-    @RequestMapping(value = "/xxx",method = RequestMethod.GET)
+    @RequestMapping(value = "/xxx",method = RequestMethod.POST)
     public String test(){
         return service.doSome();
     }
