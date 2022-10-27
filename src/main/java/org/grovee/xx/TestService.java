@@ -11,5 +11,5 @@ public interface TestService {
      * 控制器调用的方法
      * @return success
      */
-    String doSome();
+    String doSome(Integer id,String name);
 }

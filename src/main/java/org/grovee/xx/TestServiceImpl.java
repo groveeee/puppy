@@ -11,7 +11,7 @@ import org.grovee.ioc.Service;
 @Service
 public class TestServiceImpl implements TestService{
     @Override
-    public String doSome() {
-        return "success";
+    public String doSome(Integer id,String name) {
+        return "success:"+id+"name:"+name;
     }
 }

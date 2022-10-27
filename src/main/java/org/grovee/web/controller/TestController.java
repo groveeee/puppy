@@ -3,6 +3,7 @@ package org.grovee.web.controller;
 import org.grovee.di.Automatic;
 import org.grovee.mc.anno.Controller;
 import org.grovee.mc.anno.RequestMapping;
+import org.grovee.mc.anno.RequestParam;
 import org.grovee.mc.constant.RequestMethod;
 import org.grovee.xx.TestService;
 
@@ -21,7 +22,7 @@ public class TestController {
     private TestService service;
 
     @RequestMapping(value = "/xxx",method = RequestMethod.POST)
-    public String test(){
-        return service.doSome();
+    public String test(@RequestParam(value = "id") Integer id,@RequestParam("name") String name){
+        return service.doSome(id,name);
     }
 }
