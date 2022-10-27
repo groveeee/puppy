@@ -6,14 +6,16 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.grovee.context.ApplicationContext;
+import org.grovee.ioc.init.ComponentScanAndInitAndStart;
 import org.grovee.servlet.DispatcherServlet;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 /**
  * @author grovee
  * @version 1.0.0
- * @Description TODO
+ * @Description Tomcat启动类
  * @createTime 2022年10月26日 18:00:00
  */
 public class TomcatStart {
@@ -39,7 +41,8 @@ public class TomcatStart {
         }
         try {
             tomcat.start();
-            System.out.println("tomcat 已启动");
+            System.out.println(LocalDateTime.now()+" : INFO========================tomcat 已启动");
+            System.out.println(LocalDateTime.now()+" : INFO========================项目启动耗时:"+ (System.currentTimeMillis() - ComponentScanAndInitAndStart.startTime));
             tomcat.getServer().await();
         } catch (LifecycleException e) {
             throw new RuntimeException(e);

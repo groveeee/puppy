@@ -12,14 +12,26 @@ public class UniqueRequest{
     private String path;
     private String method;
 
+
+
+    public UniqueRequest() {
+    }
+
+    public UniqueRequest(String path, String method) {
+        this.path = path;
+        this.method = method;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UniqueRequest request = (UniqueRequest) o;
-        if (!Objects.equals(path, request.path)) return false;
-        return Objects.equals(method, request.method);
+        UniqueRequest that = (UniqueRequest) o;
+
+        if (!Objects.equals(path, that.path)) return false;
+        return Objects.equals(method, that.method);
     }
 
     @Override
@@ -28,4 +40,21 @@ public class UniqueRequest{
         result = 31 * result + (method != null ? method.hashCode() : 0);
         return result;
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
 }

@@ -2,6 +2,7 @@ package org.grovee.web.controller;
 
 import org.grovee.mc.anno.Controller;
 import org.grovee.mc.anno.RequestMapping;
+import org.grovee.mc.enums.RequestMethod;
 
 /**
  * @author grovee
@@ -11,9 +12,9 @@ import org.grovee.mc.anno.RequestMapping;
  */
 
 @Controller
-@RequestMapping
+@RequestMapping(value = "/test")
 public class TestController {
-    @RequestMapping(value = "/test")
+    @RequestMapping(value = "/xxx",method = RequestMethod.GET)
     public String test(){
         return "success";
     }

@@ -6,8 +6,16 @@ package org.grovee.mc.enums;
  * @Description 请求方法类型
  * @createTime 2022年10月26日 23:02:00
  */
-public enum RequestMethod {
+public interface RequestMethod {
 
-    GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
-
+   static String GET= "GET";
+   static String HEAD= "HEAD"; 
+   static String POST= "POST";
+   static String PUT= "PUT"; 
+   static String PATCH= "PATCH"; 
+   static String DELETE= "DELETE";
+   static String OPTIONS= "OPTIONS";
+   static String TRACE= "TRACE"; 
+   static String  SERVICE="SERVICE";
+    
 }

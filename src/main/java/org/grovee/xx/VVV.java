@@ -1,6 +1,6 @@
 package org.grovee.xx;
 
-import org.grovee.ioc.Component;
+import org.grovee.ioc.Service;
 
 /**
  * @author grovee
@@ -8,6 +8,6 @@ import org.grovee.ioc.Component;
  * @Description TODO
  * @createTime 2022年10月26日 11:30:00
  */
-@Component
+@Service
 public class VVV {
 }

@@ -15,4 +15,6 @@ import java.lang.annotation.Target;
 @Target(value={ElementType.TYPE,ElementType.FIELD})
 public @interface Controller {
 
+    String value() default "";
+
 }

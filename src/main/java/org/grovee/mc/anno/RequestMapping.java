@@ -19,12 +19,12 @@ public @interface RequestMapping {
     /**
      * 匹配路径
      */
-    String[] value() default {};
+    String value() default "/";
 
     /**
      * 请求类型
      */
-    RequestMethod[] method() default {};
+    String method() default RequestMethod.SERVICE;
 
     /**
      * 请求参数

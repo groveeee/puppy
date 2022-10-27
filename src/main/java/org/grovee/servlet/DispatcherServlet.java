@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.grovee.ioc.Component;
+import org.grovee.mc.handler.RequestHandler;
 
 import java.io.IOException;
 
@@ -74,7 +75,8 @@ public class DispatcherServlet extends HttpServlet {
         System.out.println("请求方法:"+req.getMethod());
         resp.setCharacterEncoding("utf-8");
         System.out.println("请求路径:"+req.getRequestURI());
-        resp.getWriter().println("成功访问");
+        //resp.getWriter().println("成功访问");
+        RequestHandler.doo(req,resp);
     }
 
     @Override
