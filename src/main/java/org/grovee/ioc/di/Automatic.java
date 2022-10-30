@@ -1,4 +1,4 @@
-package org.grovee.di;
+package org.grovee.ioc.di;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

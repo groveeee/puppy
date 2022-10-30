@@ -73,9 +73,9 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Log.getInfoString("请求方法:" + req.getMethod());
+        Log.info("请求方法:" + req.getMethod());
         resp.setCharacterEncoding("utf-8");
-        Log.getInfoString("请求路径:" + req.getRequestURI());
+        Log.info("请求路径:" + req.getRequestURI());
         //resp.getWriter().println("成功访问");
         RequestHandler.doo(req, resp);
     }

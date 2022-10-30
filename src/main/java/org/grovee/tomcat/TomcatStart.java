@@ -5,7 +5,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
-import org.grovee.context.ApplicationContext;
+import org.grovee.ioc.context.ApplicationContext;
 import org.grovee.ioc.init.ComponentScanAndInitAndStart;
 import org.grovee.log.Log;
 import org.grovee.servlet.DispatcherServlet;

@@ -16,6 +16,5 @@ public interface RequestMethod {
    static String DELETE= "DELETE";
    static String OPTIONS= "OPTIONS";
    static String TRACE= "TRACE"; 
-   static String  SERVICE="SERVICE";
-    
+
 }

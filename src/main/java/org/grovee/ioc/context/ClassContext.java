@@ -1,4 +1,4 @@
-package org.grovee.context;
+package org.grovee.ioc.context;
 
 import java.util.concurrent.ConcurrentHashMap;
 

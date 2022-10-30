@@ -9,7 +9,13 @@ import java.util.Objects;
  * @createTime 2022年10月26日 23:24:00
  */
 public class UniqueRequest{
+    /**
+     * 请求路径
+     */
     private String path;
+    /**
+     * 请求方法 RequestMethod
+     */
     private String method;
 
 
@@ -39,6 +45,14 @@ public class UniqueRequest{
         int result = path != null ? path.hashCode() : 0;
         result = 31 * result + (method != null ? method.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "UniqueRequest{" +
+                "path='" + path + '\'' +
+                ", method='" + method + '\'' +
+                '}';
     }
 
     public String getPath() {

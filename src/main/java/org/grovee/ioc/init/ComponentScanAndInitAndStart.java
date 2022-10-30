@@ -1,8 +1,8 @@
 package org.grovee.ioc.init;
 
-import org.grovee.context.ApplicationContext;
-import org.grovee.context.ClassContext;
-import org.grovee.di.Automatic;
+import org.grovee.ioc.context.ApplicationContext;
+import org.grovee.ioc.context.ClassContext;
+import org.grovee.ioc.di.Automatic;
 import org.grovee.ioc.Component;
 import org.grovee.ioc.Service;
 import org.grovee.log.Log;
@@ -47,6 +47,8 @@ public class ComponentScanAndInitAndStart {
         }
         attributeAssignment();
         Log.info("类与对象初始化完成");
+        Log.info("IOC容器: "+ApplicationContext.getApps());
+        Log.info("mv请求路径与请求方法和执行方法的映射集合: "+RequestMatcher.getRegistry());
     }
 
     /**
@@ -80,7 +82,7 @@ public class ComponentScanAndInitAndStart {
     }
 
     /**
-     * 加载文件夹下的所有的需要被管理的类进行实例化
+     * 递归函数 加载文件夹下的所有的需要被管理的类进行实例化
      *
      * @param files 文件夹
      */
@@ -113,8 +115,13 @@ public class ComponentScanAndInitAndStart {
                             // 打破封装
                             method.setAccessible(true);
                             RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                            if (requestMapping != null) {
-                                UniqueRequest uniqueRequest = new UniqueRequest(rootPath + requestMapping.value(), requestMapping.method());
+                            // 处理RESULFful 风格的请求路径
+                            String value = requestMapping.value();
+                            value = resultful2wildcard(value);
+                            String[] methods = requestMapping.method();
+                            // 将所有的请求方法 都存一份
+                            for (String s : methods) {
+                                UniqueRequest uniqueRequest = new UniqueRequest(rootPath + value, s);
                                 UniqueHandlerMethod uniqueHandlerMethod = new UniqueHandlerMethod(method, instance);
                                 RequestMatcher.add(uniqueRequest, uniqueHandlerMethod);
                             }
@@ -123,6 +130,26 @@ public class ComponentScanAndInitAndStart {
                 }
             }
         }
+    }
+
+    /**
+     * 将resultful请求路径进行转换成 \/*\/*\/*
+     * @param value 通配符请求路径
+     * @return
+     */
+    public static String resultful2wildcard(String value) {
+        String[] split = value.split("/");
+        StringBuilder builder = new StringBuilder();
+        // 重新组装请求路径 将{*} 替换成*
+        for (String s : split) {
+            if (s.startsWith("{") && s.endsWith("}")){
+                builder.append("/*");
+            }else if (s.length()>0){
+                builder.append("/").append(s);
+            }
+        }
+        value = builder.toString();
+        return value;
     }
 
     /**

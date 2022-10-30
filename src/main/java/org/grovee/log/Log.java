@@ -19,7 +19,7 @@ public class Log {
      * @param content 要打印的内容
      */
     public static String getFormatLogString(String content, LogFontColor color, LogFontStyle style) {
-        content = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " " + LogConstant.SEPARATOR + content;
+        content = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " " + LogConstant.SEPARATOR + " " + content;
         boolean hasType = style.getI() != 1 && style.getI() != 3 && style.getI() != 4;
         if (hasType) {
             return String.format("\033[%dm%s\033[0m", color.getI(), content);
@@ -35,7 +35,7 @@ public class Log {
      * @return 格式化字符串
      */
     public static String getInfoString(String content) {
-        content = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " " + LogConstant.SEPARATOR + content;
+        content = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " " + LogConstant.SEPARATOR + " " + content;
         return String.format("\033[%dm%s\033[0m", LogFontColor.GREEN.getI(), content);
     }
 

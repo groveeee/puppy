@@ -1,9 +1,11 @@
 package org.grovee.mc.handler;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSONObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.grovee.log.Log;
+import org.grovee.mc.anno.PathVariable;
 import org.grovee.mc.anno.RequestParam;
 import org.grovee.mc.matcher.RequestMatcher;
 import org.grovee.mc.matcher.UniqueHandlerMethod;
@@ -14,6 +16,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.grovee.mc.constant.BasicType.*;
 
@@ -36,13 +39,34 @@ public class RequestHandler {
         UniqueRequest uniqueRequest = new UniqueRequest(uri, requestMethod);
         UniqueHandlerMethod uniqueHandlerMethod = RequestMatcher.get(uniqueRequest);
         Log.info("获取到的对应的执行方法:method:" + uniqueHandlerMethod);
+        // 用来获取存放uri转换为通配符后的请求路径
+        String resultPath = uri;
         if (uniqueHandlerMethod == null) {
-            // 没有对应的处理方式
-            try {
-                notFound(response);
-                return;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            // 匹配resultful风格请求路径
+            String[] split = uri.split("/");
+            List<String> strings = new ArrayList<>(List.of(split));
+            for (int i = strings.size()-1; i > -1; i--) {
+                if (StrUtil.isNotBlank(strings.get(i))) {
+                    strings.set(i, "*");
+                    String join = StrUtil.join("/",strings);
+                    System.out.println("join: " + join);
+                    uniqueRequest = new UniqueRequest(join, requestMethod);
+                    uniqueHandlerMethod = RequestMatcher.get(uniqueRequest);
+                    if (uniqueHandlerMethod!=null){
+                        resultPath = join;
+                        System.out.println("uniqueHandlerMethod: "+uniqueHandlerMethod);
+                        break;
+                    }
+                }
+            }
+            if (uniqueHandlerMethod == null) {
+                // 没有对应的处理方式
+                try {
+                    notFound(response);
+                    return;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         // 处理请求参数
@@ -53,22 +77,43 @@ public class RequestHandler {
         ArrayList<Object> finalParams = new ArrayList<>();
         for (Parameter p : parameters) {
             Log.info("方法上定义的请求参数:" + p);
-            Annotation annotation = p.getAnnotations()[0];
-            Log.info("请求参数标识的注解:" + annotation);
-            if (annotation instanceof RequestParam requestParam) {
-                // 获取注解内的别名
-                String value = requestParam.value();
-                // 从request中获取对应的参数
-                String parameter = request.getParameter(value);
-                // 判断必需参数是否存在
-                if (requestParam.required() && parameter == null) {
-                    throw new RuntimeException("没了这个参数 你让我如何交差");
+            Annotation[] annotations = p.getAnnotations();
+            Log.info("请求参数上的注解数量:" + annotations.length);
+            if (annotations.length > 0) {
+                Annotation annotation = p.getAnnotations()[0];
+                Log.info("请求参数标识的注解:" + annotation);
+                if (annotation instanceof RequestParam requestParam) {
+                    // 获取注解内的别名
+                    String value = requestParam.value();
+                    // 从request中获取对应的参数
+                    String parameter = request.getParameter(value);
+                    // 判断必需参数是否存在
+                    if (requestParam.required() && parameter == null) {
+                        throw new RuntimeException("没了这个参数 你让我如何交差");
+                    }
+                    // 通过类型名字强转成对应的参数类型 存入集合中
+                    finalParams.add(cast2RealType(parameter, p.getType().getName()));
                 }
-                // 通过类型名字强转成对应的参数类型 存入集合中
-                finalParams.add(cast2RealType(parameter, p.getType().getName()));
+                else if (annotation instanceof PathVariable pathVariable) {
+                    // 获取注解中的value值
+                    String value = pathVariable.value();
+                    Log.info("pathVariable value: "+value);
+                    String[] resultSplit = resultPath.split("/");
+                    String[] uriSplit = uri.split("/");
+                    if (resultSplit.length!= uriSplit.length){
+                        throw new RuntimeException("请求路径出错!");
+                    }
+                    // 获取所有的通配符 * 所对应的uri路径参数
+                    for (int i = 0; i < resultSplit.length; i++) {
+                        if ("*".equals(resultSplit[i])){
+                            // 获取原始数据类型 加载到最终执行参数列表中
+                            finalParams.add(cast2RealType(uriSplit[i], p.getType().getName()));
+                        }
+                    }
+                }
+                // TODO: 2022/10/30 处理@RequestBody
             }
         }
-        String id = request.getParameter("id");
         try {
             Object invoke = uniqueHandlerMethod.getMethod().invoke(uniqueHandlerMethod.getInstance(), finalParams.toArray());
             String s = JSONObject.toJSONString(invoke);

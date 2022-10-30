@@ -1,11 +1,11 @@
 package org.grovee.mc.anno;
 
-import org.grovee.mc.constant.RequestMethod;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static org.grovee.mc.constant.RequestMethod.*;
 
 /**
  * @author grovee
@@ -24,7 +24,7 @@ public @interface RequestMapping {
     /**
      * 请求类型
      */
-    String method() default RequestMethod.SERVICE;
+    String[] method() default {GET,POST,PUT,DELETE};
 
     /**
      * 请求参数

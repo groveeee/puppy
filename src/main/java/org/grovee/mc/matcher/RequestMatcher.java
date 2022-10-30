@@ -20,6 +20,10 @@ public class RequestMatcher {
     }
 
     public static UniqueHandlerMethod get(UniqueRequest request){
+
+        //
+        String path = request.getPath();
+
         return registry.get(request);
     }
 

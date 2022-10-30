@@ -1,6 +1,6 @@
 package org.grovee.xx;
 
-import org.grovee.di.Automatic;
+import org.grovee.ioc.di.Automatic;
 import org.grovee.ioc.Component;
 
 /**
