@@ -12,6 +12,7 @@ import org.grovee.log.Log;
 import org.grovee.mc.handler.RequestHandler;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author grovee
@@ -77,6 +78,8 @@ public class DispatcherServlet extends HttpServlet {
         resp.setCharacterEncoding("utf-8");
         Log.info("请求路径:" + req.getRequestURI());
         //resp.getWriter().println("成功访问");
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        System.out.println(parameterMap.size());
         RequestHandler.doo(req, resp);
     }
 

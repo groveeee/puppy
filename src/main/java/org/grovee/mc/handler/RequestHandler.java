@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.grovee.mc.constant.BasicType.*;
 
@@ -83,8 +84,8 @@ public class RequestHandler {
         // 匹配通用请求路径时 开始的下标索引 用于处理多个这种请求 /*/*
         int num = 0;
         if (resultful) {
-             resultSplit = resultPath.split("/");
-             uriSplit = uri.split("/");
+            resultSplit = resultPath.split("/");
+            uriSplit = uri.split("/");
             if (resultSplit.length != uriSplit.length) {
                 throw new RuntimeException("请求路径出错!");
             }
@@ -131,7 +132,19 @@ public class RequestHandler {
                         }
                     }
                 } else if (annotation instanceof RequestBody requestBody) {
-                    // TODO: 2022/10/30 处理@RequestBody
+                    try {
+                        // 获取请求体中的内容
+                        String collect = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+                        // 判断是否为JSON数据
+                        if (collect.startsWith("{") && collect.endsWith("}")) {
+                            // JSON字符串转换为Java对象
+                            Object o = JSONObject.parseObject(collect, p.getType());
+                            finalParams.add(o);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
 
             }
